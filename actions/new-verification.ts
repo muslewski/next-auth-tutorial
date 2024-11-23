@@ -7,16 +7,19 @@ import { getVerificationTokenByToken } from "@/data/verification-token";
 export const newVerification = async (token: string) => {
   const existingToken = await getVerificationTokenByToken(token);
 
+  // Check if the token exists
   if (!existingToken) {
     return { error: "Token does not exist!" };
   }
 
+  // Check if the token has expired
   const hasExpired = new Date(existingToken.email) < new Date();
 
   if (hasExpired) {
     return { error: "Token has expired!" };
   }
 
+  // Check if the email exists
   const existingUser = await getUserByEmail(existingToken.email);
 
   if (!existingUser) {
