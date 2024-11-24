@@ -60,6 +60,11 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         session.user.role = token.role as UserRole;
       }
 
+      // Add this: map picture to image
+      if (token.picture && session.user) {
+        session.user.image = token.picture;
+      }
+
       return session;
     },
 

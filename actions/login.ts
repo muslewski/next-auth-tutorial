@@ -55,7 +55,6 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
 
   if (existingUser.isTwoFactorEnabled && existingUser.email) {
     if (code) {
-      // ! Problem that when the code is 0 char it is being generated again
       // ? Add the logic that when 2fa activated then when changing password it should be firstly asked for 2fa code
 
       // Verify code
