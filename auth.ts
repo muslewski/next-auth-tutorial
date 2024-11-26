@@ -52,39 +52,45 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     },
     async session({ token, session }) {
       console.log({ sessionToken: token });
-      if (token.sub && session.user) {
-        session.user.id = token.sub;
-      }
+      if (token.sub && session.user) session.user.id = token.sub;
 
-      if (token.role && session.user) {
+      if (token.role && session.user)
         session.user.role = token.role as UserRole;
-      }
 
       // Add this: map picture to image
-      if (token.picture && session.user) {
-        session.user.image = token.picture;
-      }
+      if (token.picture && session.user) session.user.image = token.picture;
+
+      if (session.user)
+        session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
 
       return session;
     },
 
-    async jwt({ token, session, user, trigger }) {
+    async jwt({
+      token,
+      //  session, user, trigger
+    }) {
       if (!token.sub) return token;
 
-      if (
-        trigger === "signIn" ||
-        trigger === "signUp" ||
-        (trigger === "update" && session?.user?.role)
-      ) {
-        if (user) {
-          token.role = user.role as UserRole;
-        } else if (session?.user?.role) {
-          token.role = session.user.role;
-        }
-      }
-      // const existingUser = await getUserById(token.sub);
-      // if (!existingUser) return token;
-      // token.role = existingUser.role;
+      // if (
+      //   trigger === "signIn" ||
+      //   trigger === "signUp" ||
+      //   (trigger === "update" && session?.user?.role)
+      // ) {
+      //   if (user) {
+      //     token.role = user.role as UserRole;
+      //     token.isTwoFactorEnabled = user.isTwoFactorEnabled;
+      //   } else if (session?.user?.role) {
+      //     token.role = session.user.role;
+      //     token.isTwoFactorEnabled = session.user.isTwoFactorEnabled;
+      //   }
+      // }
+
+      const existingUser = await getUserById(token.sub);
+      if (!existingUser) return token;
+
+      token.role = existingUser.role;
+      token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
 
       return token;
     },
