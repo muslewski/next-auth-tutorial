@@ -1,4 +1,5 @@
 import authConfig from "@/auth.config";
+import { getAccountByUserId } from "@/data/account";
 import { getTwoFactorConfirmationByUserId } from "@/data/two-factor-confirmation";
 import { getUserById } from "@/data/user";
 import { db } from "@/lib/db";
@@ -51,7 +52,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       return true;
     },
     async session({ token, session }) {
-      console.log({ sessionToken: token });
+      // console.log({ sessionToken: token });
       if (token.sub && session.user) session.user.id = token.sub;
 
       if (token.role && session.user)
@@ -62,6 +63,12 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
       if (session.user)
         session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
+
+      if (session.user) {
+        session.user.isOAuth = token.isOAuth as boolean;
+        session.user.name = token.name;
+        session.user.email = token.email as string;
+      }
 
       return session;
     },
@@ -89,6 +96,11 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       const existingUser = await getUserById(token.sub);
       if (!existingUser) return token;
 
+      const existingAccount = await getAccountByUserId(existingUser.id);
+
+      token.isOAuth = !!existingAccount;
+      token.name = existingUser.name;
+      token.email = existingUser.email;
       token.role = existingUser.role;
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
 
