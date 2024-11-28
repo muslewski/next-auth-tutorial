@@ -7,7 +7,6 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { settings } from "@/actions/settings";
 import { useTransition, useState } from "react";
-import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 
 import { SettingsSchema } from "@/schemas";
