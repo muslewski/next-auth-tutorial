@@ -1,8 +1,8 @@
 "use server";
 
 import { signOut } from "@/auth";
-import { authRoutes } from "@/routes";
+import { publicRoutes } from "@/routes";
 
 export const logout = async () => {
-  await signOut({ redirectTo: authRoutes[0] });
+  await signOut({ redirectTo: publicRoutes[0] });
 };

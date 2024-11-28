@@ -31,7 +31,16 @@ export default auth((req) => {
   }
 
   if (!isLoggedIn && !isPublicRoute) {
-    return NextResponse.redirect(new URL(authRoutes[0], nextUrl));
+    let callbackUrl = nextUrl.pathname;
+    if (nextUrl.search) {
+      callbackUrl += nextUrl.search;
+    }
+
+    const encodedCallbackUrl = encodeURIComponent(callbackUrl);
+
+    return NextResponse.redirect(
+      new URL(authRoutes[0] + `?callbackUrl=${encodedCallbackUrl}`, nextUrl)
+    );
   }
 
   // TODO: Problem with going to page not found, it redirects automatically to login page
