@@ -134,6 +134,7 @@ const SettingsPage = () => {
                             placeholder="********"
                             type="password"
                             disabled={isPending}
+                            autoComplete="current-password"
                           />
                         </FormControl>
                         <FormMessage />
